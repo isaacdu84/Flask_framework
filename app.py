@@ -1,53 +1,44 @@
-from flask import Flask, render_template, request, redirect
-import requests
+from flask import Flask, render_template, request
 import pandas as pd
-# from bokeh.io import output_notebook, show
-from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource
+from bokeh.charts import Histogram
 from bokeh.embed import components
 
 app = Flask(__name__)
 
-feature_names = ['AAPL','GOOG','INTC','KO','MSFT','T','HPQ','WMT']
-# plotting the data
-def create_figure(current_feature_name):
-    #Grab data from quandl
-    url_dataset = 'https://www.quandl.com/api/v3/datasets/WIKI/'
-    url_options = '/data.json?start_date=2018-01-01&end_date=2018-01-31&order=asc&column_index=4&api_key=VmrejGLj7UAexzD_wssd'  # only retrieve Jan 2018
-    api_url = url_dataset + current_feature_name + url_options
-    session = requests.Session()
-    raw_data = session.get(api_url)
-    data = raw_data.json()['dataset_data']
-    df = pd.DataFrame(data['data'], columns=['Date', 'Closing'])
+# Load the Iris Data Set
+iris_df = pd.read_csv("data/iris.data", 
+    names=["Sepal Length", "Sepal Width", "Petal Length", "Petal Width", "Species"])
+feature_names = iris_df.columns[0:-1].values.tolist()
 
-    #Create a line plot
-    df['Date'] = pd.to_datetime(df['Date'])
-    source = ColumnDataSource(df)
-    p = figure(title='Quandl WIKI Closing Stock Prices - Jan 2018', plot_width=500, plot_height=500,
-               x_axis_type='datetime')
-    p.line('Date', 'Closing', source=source, legend=current_feature_name, line_width=2)
-    p.xaxis.axis_label = 'Date'
-    p.yaxis.axis_label = 'Price'
-    return p
+# Create the main plot
+def create_figure(current_feature_name, bins):
+	p = Histogram(iris_df, current_feature_name, title=current_feature_name, color='Species', 
+	 	bins=bins, legend='top_right', width=600, height=400)
 
+	# Set the x axis label
+	p.xaxis.axis_label = current_feature_name
 
+	# Set the y axis label
+	p.yaxis.axis_label = 'Count'
+	return p
+
+# Index page
 @app.route('/')
 def index():
-    current_feature_name = request.args.get("feature_name")
-    if current_feature_name == None:
-        current_feature_name = "GOOG"
+	# Determine the selected feature
+	current_feature_name = request.args.get("feature_name")
+	if current_feature_name == None:
+		current_feature_name = "Sepal Length"
 
-    #Create a plot
-    plot = create_figure(current_feature_name)
-    #Embed plot into HTML
-    script, div = components(plot)
-    return render_template('ClosingPrices.html', script=script, div=div, feature_names=feature_names, current_feature_name=current_feature_name)
+	# Create the plot
+	plot = create_figure(current_feature_name, 10)
+		
+	# Embed plot into HTML via Flask Render
+	script, div = components(plot)
+	return render_template("iris_index1.html", script=script, div=div,
+		feature_names=feature_names,  current_feature_name=current_feature_name)
 
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
-
-
+# With debug=True, Flask server will auto-reload 
+# when there are code changes
 if __name__ == '__main__':
-    app.run(port=33507)
+	app.run(port=5000, debug=True)
