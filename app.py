@@ -34,8 +34,8 @@ def create_figure(current_feature_name):
 @app.route('/')
 def index():
     current_feature_name = request.args.get("feature_name")
-    if current_feature_name = None:
-        current_feature_name == "GOOG"
+    if current_feature_name == None:
+        current_feature_name = "GOOG"
 
     #Create a plot
     plot = create_figure(current_feature_name)
