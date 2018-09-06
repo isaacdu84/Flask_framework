@@ -32,7 +32,7 @@ def create_figure(current_feature_name):
 
 
 @app.route('/')
-def index():
+def ClosingPrices():
     current_feature_name = request.args.get("feature_name")
     if current_feature_name == None:
         current_feature_name = "GOOG"
