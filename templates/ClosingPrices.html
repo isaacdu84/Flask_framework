@@ -13,6 +13,7 @@
 <H1>Stock Closing Prices</H1>
 
 <form action="/">
+<!--
 <select name="feature_name">
 	{% for feature in feature_names %}
 		{% if feature == current_feature_name %}
@@ -22,6 +23,10 @@
 		{% endif %}
 	{% endfor %}
 </select>
+-->
+Ticker symbol:
+<input type='text', name='feature_name' value='GOOG'>
+<br>
 <input type="submit">
 </form>
 
