@@ -44,10 +44,10 @@ def index():
     return render_template('ClosingPrices.html', script=script, div=div, feature_names=feature_names, current_feature_name=current_feature_name)
 
 
-@app.route('/about')
-def about():
-    return render_template('about.html')
+#@app.route('/about')
+#def about():
+#    return render_template('about.html')
 
 
 if __name__ == '__main__':
-    app.run(port=33507)
+    app.run(port=33507, debug=True)
