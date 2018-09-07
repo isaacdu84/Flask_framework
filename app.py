@@ -13,6 +13,7 @@ feature_names = ['AAPL','GOOG','INTC','KO','MSFT','T','HPQ','WMT']
 def create_figure(current_feature_name):
     #grab a crosswalk table between ticker symbol and company name
 	crosswalk = pd.read_csv("https://s3.amazonaws.com/quandl-static-content/Ticker+CSV%27s/secwiki_tickers.csv")
+	crosswalk_dict = dict(zip(crosswalk['Ticker'].values, crosswalk['Name'].values))
 	
 	#Grab data from quandl
     url_dataset = 'https://www.quandl.com/api/v3/datasets/WIKI/'
@@ -28,7 +29,7 @@ def create_figure(current_feature_name):
     source = ColumnDataSource(df)
     p = figure(title='Quandl WIKI Closing Stock Prices - Jan 2018', plot_width=500, plot_height=500,
                x_axis_type='datetime')
-    p.line('Date', 'Closing', source=source, legend=crosswalk[crosswalk['Ticker']==current_feature_name], line_width=2)
+    p.line('Date', 'Closing', source=source, legend=crosswalk_dict[current_feature_name], line_width=2)
     p.xaxis.axis_label = 'Date'
     p.yaxis.axis_label = 'Price'
     return p
