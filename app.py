@@ -64,7 +64,7 @@ def index():
     plot = create_figure(current_feature_name)
     #Embed plot into HTML
     script, div = components(plot)
-    return render_template('ClosingPrices.html', script=script, div=div, feature_names=feature_names, current_feature_name=current_feature_name)
+    return render_template('ClosingPrices.html', script=script, div=div, current_feature_name=current_feature_name)
 
 
 #@app.route('/about')
